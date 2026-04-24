@@ -1,0 +1,81 @@
+# ── OS ─────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── IDEs ───────────────────────────────────────────────
+.vscode/
+.idea/
+
+# ── Python ─────────────────────────────────────────────
+.Python
+**/__pycache__/
+*.py[cod]
+*.pyo
+*.pyc
+*.pyd
+
+# ── Virtual Environments ───────────────────────────────
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# ── Secrets ────────────────────────────────────────────
+.env
+# (keep .env.example — it's the safe public template)
+
+# ── Distribution / Packaging ───────────────────────────
+build/
+dist/
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# ── PyInstaller ────────────────────────────────────────
+# *.manifest
+*.spec
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ── Testing & Coverage ─────────────────────────────────
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+*.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# ── Database ───────────────────────────────────────────
+*.db
+*.sqlite3
+
+# ── Project-Specific ───────────────────────────────────
+uploads/            # user-uploaded photos — never commit binary files
+app/cache/
+
+# ── Node / React Frontend ──────────────────────────────
+node_modules/
+frontend/build/
+frontend/dist/

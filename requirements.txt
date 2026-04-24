@@ -1,0 +1,32 @@
+# ── Web Framework ──────────────────────────────────────
+fastapi==0.115.6
+uvicorn[standard]==0.32.1       # ASGI server that runs FastAPI
+
+# ── Database (two drivers, two purposes) ───────────────
+sqlalchemy[asyncio]==2.0.36     # ORM (models → SQL)
+asyncpg==0.30.0                 # async driver (FastAPI runtime queries)
+psycopg[binary]==3.2.3          # sync driver (Alembic migrations only)
+alembic==1.14.0                 # database schema migrations
+
+# ── Authentication & Security ──────────────────────────
+passlib[bcrypt]==1.7.4          # password hashing
+python-jose[cryptography]==3.3.0  # JWT creation and verification
+python-multipart==0.0.12        # needed for form data (file uploads)
+
+# ── Config & Environment ───────────────────────────────
+python-dotenv==1.0.1            # loads .env into os.environ
+pydantic==2.9.2                 # data validation (FastAPI uses this)
+pydantic-settings==2.6.1        # pydantic-powered settings from .env
+
+# ── Utilities ──────────────────────────────────────────
+email-validator==2.2.0          # validates email fields in schemas
+Pillow==11.0.0                  # image processing for photo uploads
+python-dateutil==2.9.0          # robust date/time parsing
+aiofiles==24.1.0                # async file I/O (for saving uploads)
+
+# ── CORS ───────────────────────────────────────────────
+# (fastapi handles this natively, no extra package needed)
+
+# ── Testing ────────────────────────────────────────────
+pytest==8.3.3
+httpx==0.28.1                   # async test client for FastAPI
