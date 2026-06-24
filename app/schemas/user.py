@@ -4,6 +4,7 @@ import uuid
 from datetime import datetime
 from pydantic import BaseModel, EmailStr, Field, field_validator
 from typing import Optional
+import zxcvbn as zxcvbn_checker # rename on import to avoid name collision
 
 
 class UserBase(BaseModel):
@@ -19,11 +20,18 @@ class UserCreate(UserBase):
     What the API accepts when registering a new user. (Create)
     Password is the plain text here - it gets hashed in the service layer.
     We NEVER store plain text passwords.
+
+    password_score meanings:
+        0 - too guessable (reject)
+        1 - very guessable (reject)
+        2 - somewhat guessable (reject - we require 3+)
+        3 - safely unguessable (accept)
+        4 - very unguessable (accept)
     """
     password: str = Field(
         min_length=8,
         max_length=100,
-        description="Must be at least 8 characters"
+        description="Must score at least 3 or 4 on strength check"
     )
 
     @field_validator("password") # A Pydantic decorator that says: "run this method to validate the password field before accepting it." The "password" in quotes tells it which specific field to watch. Whenever someone submits a password, Pydantic automatically calls this method first.
@@ -32,12 +40,38 @@ class UserCreate(UserBase):
         """
         Basic password rules. In production you'd use  
         a library like zxcvbn for real strength checking.
+        Update: NOW we're using it.
         """
-        if not any(char.isupper() for char in v):
-            raise ValueError("Password must contain at least one uppercase letter")
-        if not any(char.isdigit() for char in v):
-            raise ValueError("Password must contain at least one digit")
-        return v
+        result = zxcvbn_checker.zxcvbn(v)
+        score = result["score"]         # 0-4
+        feedback = result["feedback"]   # {"warning": "...", "suggestions": [...]}
+
+        if score < 3:
+            # Build a helpful error message from zxcvbn's own suggestions
+            warning = feedback.get("warning", "")
+            suggestions = feedback.get("suggestions", [])
+
+            # crack_times_display gives human-readable estimates
+            crack_time = result["crack_times_display"]["offline_slow_hashing_1e4_per_second"]
+
+            parts = []
+            if warning:
+                parts.append(warning)
+            if suggestions:
+                parts.append(" ".join(suggestions))
+            parts.append(
+                f"Estimated crack time: {crack_time}."
+                f"Strength score: {score}/4 (need 3+)."
+            )
+
+            raise ValueError(" ".join(parts))
+        return v # return the original plain text - hashing happens in service layer
+
+        # if not any(char.isupper() for char in v):
+        #     raise ValueError("Password must contain at least one uppercase letter")
+        # if not any(char.isdigit() for char in v):
+        #     raise ValueError("Password must contain at least one digit")
+        # return v
 
 class UserUpdate(BaseModel):
     """
